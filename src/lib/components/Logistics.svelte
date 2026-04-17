@@ -8,7 +8,8 @@
 	const links = {
 		maps: "https://www.google.com/maps/dir/?api=1&destination=Hotel+Pousada+Margem+da+Amazonia",
 		waze: "https://waze.com/ul?ll=-2.9974895,-60.09235&navigate=yes",
-		uber: "https://m.uber.com/ul/?action=setPickup&pickup=my_location&destination[latitude]=-2.9974895&destination[longitude]=-60.09235"
+		uber: "https://m.uber.com/ul/?action=setPickup&pickup=my_location&destination[latitude]=-2.9974895&destination[longitude]=-60.09235&destination[name]=Hotel+Pousada+Margem+da+Amazonia",
+		ninenine: "https://99app.com/rider/?destination=-2.9974895,-60.09235&destinationName=Hotel+Pousada+Margem+da+Amazonia"
 	};
 
 	let copied = $state(false);
@@ -29,7 +30,7 @@
 <section class="pb-24 px-6 max-w-5xl mx-auto -mt-8">
 	<div class="grid lg:grid-cols-2 gap-12 bg-surface/30 p-4 rounded-[2.5rem] border border-cream/5 overflow-hidden">
 		<!-- Map Iframe -->
-		<div use:animate class="w-full h-[350px] md:h-full rounded-3xl overflow-hidden border border-cream/10 grayscale-[0.2] hover:grayscale-0 transition-all duration-700 shadow-inner">
+		<div class="w-full h-[350px] md:h-full rounded-3xl overflow-hidden border border-cream/10 grayscale-[0.2] hover:grayscale-0 transition-all duration-700 shadow-inner">
 			<iframe 
 				title="Mapa Localização"
 				src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.359558538197!2d-60.09235009999999!3d-2.9974895000000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x926c16f42c8fe061%3A0xcd18350dc06dae54!2sHotel%20Pousada%20Margem%20da%20Amaz%C3%B4nia!5e0!3m2!1spt-BR!2sbr!4v1776388466525!5m2!1spt-BR!2sbr" 
@@ -37,7 +38,7 @@
 				height="100%" 
 				style="border:0;" 
 				allowfullscreen
-				loading="lazy"
+				loading="eager"
 				referrerpolicy="no-referrer-when-downgrade"
 			></iframe>
 		</div>
@@ -108,7 +109,7 @@
 				</button>
 
 				<button 
-					onclick={copyAddress}
+					onclick={() => handleNav(links.ninenine)}
 					class="flex flex-col items-center justify-center gap-2 bg-charcoal/60 p-4 rounded-2xl border border-cream/10 hover:border-[#FDCB2E]/40 group transition-all"
 				>
 					<div class="w-12 h-12 rounded-xl bg-[#FDCB2E]/15 flex items-center justify-center group-hover:scale-110 transition-transform border border-[#FDCB2E]/30">
