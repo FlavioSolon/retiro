@@ -25,6 +25,76 @@
 		vibrate(60);
 		window.open(link, '_blank');
 	}
+
+	// Smart app opener with fallback
+	function tryOpenApp(appUrl: string, webUrl: string) {
+		vibrate(60);
+		
+		// Check if mobile
+		const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		
+		if (!isMobile) {
+			// Desktop: go directly to web
+			window.open(webUrl, '_blank');
+			return;
+		}
+		
+		// Mobile: try app first, then fallback
+		const start = Date.now();
+		
+		// For iOS, use location.href for app schemes
+		if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+			window.location.href = appUrl;
+			
+			// Fallback to web after 2 seconds if app didn't open
+			setTimeout(() => {
+				if (document.visibilityState !== 'hidden') {
+					window.location.href = webUrl;
+				}
+			}, 2000);
+		} else {
+			// Android: try app scheme
+			window.location.href = appUrl;
+			
+			// Fallback after 2 seconds
+			setTimeout(() => {
+				if (Date.now() - start < 3000) {
+					window.open(webUrl, '_blank');
+				}
+			}, 2000);
+		}
+	}
+
+	function openUber() {
+		const lat = -2.9974895;
+		const lng = -60.09235;
+		const name = encodeURIComponent("Hotel Pousada Margem da Amazonia");
+		const address = encodeURIComponent("Ramal do Bancrevea, 30, Tarumã Açu, Manaus - AM");
+		
+		// Uber native app scheme
+		const appUrl = `uber://?action=setPickup&pickup=my_location&dropoff[latitude]=${lat}&dropoff[longitude]=${lng}&dropoff[nickname]=${name}&dropoff[formatted_address]=${address}`;
+		
+		// Uber web fallback
+		const webUrl = `https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]=${lat}&dropoff[longitude]=${lng}&dropoff[nickname]=${name}`;
+		
+		tryOpenApp(appUrl, webUrl);
+	}
+
+	function open99() {
+		const lat = -2.9974895;
+		const lng = -60.09235;
+		const name = encodeURIComponent("Hotel Pousada Margem da Amazonia");
+		
+		// 99/Didi native app schemes (try multiple formats)
+		const appUrl = `ninenine://ride?lat=${lat}&lng=${lng}&name=${name}`;
+		const appUrl2 = `didi://ride?destination_lat=${lat}&destination_lng=${lng}&destination_name=${name}`;
+		
+		// 99 web - use search with coordinates
+		const webUrl = `https://99app.com/rider/`;
+		
+		// Try to open 99 - if fails, user can manually enter
+		tryOpenApp(appUrl, webUrl);
+	}
 </script>
 
 <section class="pb-24 px-6 max-w-5xl mx-auto -mt-8">
@@ -94,7 +164,7 @@
 				</button>
 
 				<button 
-					onclick={() => handleNav(links.uber)}
+					onclick={openUber}
 					class="flex flex-col items-center justify-center gap-2 bg-charcoal/60 p-4 rounded-2xl border border-cream/10 hover:border-white/40 group transition-all"
 				>
 					<div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform border border-white/20">
@@ -109,7 +179,7 @@
 				</button>
 
 				<button 
-					onclick={() => handleNav(links.ninenine)}
+					onclick={open99}
 					class="flex flex-col items-center justify-center gap-2 bg-charcoal/60 p-4 rounded-2xl border border-cream/10 hover:border-[#FDCB2E]/40 group transition-all"
 				>
 					<div class="w-12 h-12 rounded-xl bg-[#FDCB2E]/15 flex items-center justify-center group-hover:scale-110 transition-transform border border-[#FDCB2E]/30">
