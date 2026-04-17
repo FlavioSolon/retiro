@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
+
+/* Fallback fonts while loading */
+@font-face {
+  font-family: 'Playfair Display';
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+}
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+
+  --color-charcoal: #0F0F0F;
+  --color-surface: #1A1A1A;
+  --color-terracotta: #B95B24;
+  --color-cream: #FDFBF7;
+  --color-gold: #D4AF37;
+
+  --animate-fade-up: fade-up 0.5s ease-out forwards;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root {
+  background-color: var(--color-charcoal);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  /* Optimize touch response on mobile */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling but respect reduced motion */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(253, 251, 247, 0.1);
+}
+
+/* Disable expensive effects on low-power/small screens */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Disable backdrop-filter on older/slower devices */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .glass {
+    background: rgba(15, 15, 15, 0.95);
+  }
+}
+
+/* Optimize animations for GPU acceleration */
+.animate-bounce,
+.transform,
+.transition-all {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Mobile touch optimizations */
+button, a {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent text selection on interactive elements */
+button, .btn, [role="button"] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bg-warm-overlay {
+  background: linear-gradient(to bottom, rgba(15, 15, 15, 0.4), rgba(15, 15, 15, 0.9));
+}
