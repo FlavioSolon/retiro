@@ -2,30 +2,67 @@
 	import { animate } from '$lib/actions/animate';
 	import { vibrate } from '$lib/utils/haptics';
 
-	// Svelte 5 Runes for logic
-	let mesSimulado = $state(new Date().getMonth()); // Default to actual month
+	// Get current real date
+	const hoje = new Date();
+	const mesAtual = hoje.getMonth();
+	const anoAtual = hoje.getFullYear();
 	
+	// Event year is 2026
+	const anoEvento = 2026;
+	
+	// Define lotes with their start dates
+	const lotes = [
+		{ id: 1, nome: '1º Lote', valor: 550, mesInicio: 4, mesFim: 5, label: 'Maio - Junho' }, // Maio e Junho
+		{ id: 2, nome: '2º Lote', valor: 580, mesInicio: 6, mesFim: 7, label: 'Julho - Agosto' }, // Julho e Agosto
+		{ id: 3, nome: '3º Lote', valor: 600, mesInicio: 8, mesFim: 9, label: 'Setembro - Outubro' }, // Setembro e Outubro
+	];
+
+	// Determine current lote based on actual date (or default to lote 1 if before May 2026)
+	function getLoteAtual(): typeof lotes[0] {
+		// If before 2026 or before May 2026, show lote 1
+		if (anoAtual < anoEvento || (anoAtual === anoEvento && mesAtual < 4)) {
+			return lotes[0];
+		}
+		// If after October 2026, show lote 3
+		if (anoAtual > anoEvento || (anoAtual === anoEvento && mesAtual > 9)) {
+			return lotes[2];
+		}
+		// Find current lote based on month
+		const lote = lotes.find(l => mesAtual >= l.mesInicio && mesAtual <= l.mesFim);
+		return lote || lotes[2]; // Default to lote 3 if not found
+	}
+
+	const loteAtual = getLoteAtual();
+
+	// Parcelamento rules based on how many months until October 2026
 	const regrasParcelamento = [
-		{ m: 0, nome: 'Jan', lote: 1, valor: 550, maxParcelas: 8 },
-		{ m: 1, nome: 'Fev', lote: 1, valor: 550, maxParcelas: 8 },
-		{ m: 2, nome: 'Mar', lote: 1, valor: 550, maxParcelas: 8 },
-		{ m: 3, nome: 'Abril', lote: 1, valor: 550, maxParcelas: 8 },
 		{ m: 4, nome: 'Maio', lote: 1, valor: 550, maxParcelas: 8 },
 		{ m: 5, nome: 'Junho', lote: 1, valor: 550, maxParcelas: 7 },
 		{ m: 6, nome: 'Julho', lote: 2, valor: 580, maxParcelas: 6 },
 		{ m: 7, nome: 'Agosto', lote: 2, valor: 580, maxParcelas: 4 },
 		{ m: 8, nome: 'Setembro', lote: 3, valor: 600, maxParcelas: 3 },
 		{ m: 9, nome: 'Outubro', lote: 3, valor: 600, maxParcelas: 2 },
-		{ m: 10, nome: 'Nov', lote: 3, valor: 600, maxParcelas: 1 },
-		{ m: 11, nome: 'Dez', lote: 3, valor: 600, maxParcelas: 1 },
 	];
 
-	// Derive the current rule based on month boundaries
+	// Simulation state - starts with current month or lote's first month
+	let mesSimulado = $state(
+		anoAtual === anoEvento && mesAtual >= 4 && mesAtual <= 9 
+			? mesAtual 
+			: loteAtual.mesInicio
+	);
+	
+	// History toggle state
+	let mostrarHistorico = $state(false);
+
+	// Derive the current rule based on simulated month
 	const regraAtual = $derived.by(() => {
-		if (mesSimulado < 4) return regrasParcelamento[4]; // Maio
-		if (mesSimulado > 9) return regrasParcelamento[9]; // Outubro
-		return regrasParcelamento[mesSimulado];
+		const regra = regrasParcelamento.find(r => r.m === mesSimulado);
+		return regra || regrasParcelamento[0];
 	});
+	
+	// Check if viewing past lote
+	const isLotePassado = $derived(regraAtual.lote < loteAtual.id);
+	const isLoteFuturo = $derived(regraAtual.lote > loteAtual.id);
 	
 	// Selection state
 	let parcelaSelecionada = $state(1);
@@ -47,12 +84,46 @@
 		vibrate(60);
 		mesSimulado = m;
 	}
+
+	function toggleHistorico() {
+		vibrate(50);
+		mostrarHistorico = !mostrarHistorico;
+	}
+
+	// Filter months: show all from May to Oct initially, hide past months as time passes
+	const mesesVisiveis = $derived.by(() => {
+		if (mostrarHistorico) {
+			// Show all months from May to October
+			return [4, 5, 6, 7, 8, 9];
+		}
+		// Show only months from current month forward (or May if before May 2026)
+		let mesInicioVisivel = 4; // Start from May by default
+		
+		if (anoAtual === anoEvento && mesAtual >= 4 && mesAtual <= 9) {
+			// We're in the event year between May-Oct, start from current month
+			mesInicioVisivel = mesAtual;
+		} else if (anoAtual > anoEvento || (anoAtual === anoEvento && mesAtual > 9)) {
+			// After October 2026, show all (event has passed)
+			mesInicioVisivel = 4;
+		}
+		
+		return regrasParcelamento
+			.filter(r => r.m >= mesInicioVisivel)
+			.map(r => r.m);
+	});
 </script>
 
 <section class="py-24 px-6 max-w-xl mx-auto">
 	<div class="text-center mb-16" use:animate>
 		<h2 class="text-4xl md:text-5xl font-serif text-cream italic mb-4">Investimento</h2>
 		<p class="text-gold uppercase tracking-[0.2em] text-[10px] font-black italic">Confira os valores e condições</p>
+	</div>
+
+	<!-- Current Lote Info Banner -->
+	<div class="bg-gold/10 border border-gold/20 rounded-2xl p-4 mb-6 text-center">
+		<p class="text-[10px] uppercase tracking-widest text-gold/70 mb-1">Lote Atual</p>
+		<p class="text-cream font-serif italic text-lg">{loteAtual.nome} • R$ {loteAtual.valor},00</p>
+		<p class="text-[9px] text-cream/40 mt-1">{loteAtual.label}</p>
 	</div>
 
 	<!-- 1. Main Calculator Card -->
@@ -65,7 +136,12 @@
 		
 		<div class="relative z-10 flex flex-col items-center">
 			<!-- Lote Indicator -->
-			<div class="bg-charcoal/80 border border-gold/20 text-gold px-6 py-2 rounded-full text-[12px] uppercase tracking-[0.3em] font-black mb-10 shadow-lg">
+			<div class="bg-charcoal/80 border border-gold/20 text-gold px-6 py-2 rounded-full text-[12px] uppercase tracking-[0.3em] font-black mb-10 shadow-lg flex items-center gap-2">
+				{#if isLotePassado}
+					<span class="text-terracotta text-[10px]">(LOTE ANTERIOR)</span>
+				{:else if isLoteFuturo}
+					<span class="text-cream/50 text-[10px]">(PRÓXIMO LOTE)</span>
+				{/if}
 				{regraAtual.lote}º Lote • {regraAtual.nome}
 			</div>
 
@@ -111,13 +187,39 @@
 		use:animate={{ type: 'fade-up', delay: 0.2 }}
 		class="bg-charcoal/40 p-8 rounded-[3rem] border border-cream/5 mb-12"
 	>
-		<div class="flex items-center justify-between mb-8">
-			<h4 class="text-cream font-serif text-2xl italic">Simular Mês</h4>
-			<span class="bg-gold/10 text-gold text-[9px] uppercase tracking-widest font-black px-3 py-1 rounded-full border border-gold/20">Modo Teste</span>
+		<div class="flex items-center justify-between mb-6">
+			<div>
+				<h4 class="text-cream font-serif text-2xl italic">Simular Pagamento</h4>
+				<p class="text-[10px] text-cream/40 mt-1">
+					{#if mostrarHistorico}
+						Visualizando todos os meses (Maio a Outubro)
+					{:else}
+						Meses disponíveis para pagamento
+					{/if}
+				</p>
+			</div>
+			<button
+				type="button"
+				onclick={toggleHistorico}
+				class="bg-gold/10 hover:bg-gold/20 text-gold text-[9px] uppercase tracking-widest font-black px-4 py-2 rounded-full border border-gold/20 transition-all flex items-center gap-2"
+			>
+				{#if mostrarHistorico}
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M6 18L18 6M6 6l12 12"/>
+					</svg>
+					<span>Ocultar Anteriores</span>
+				{:else}
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+					<span>Ver Todos os Lotes</span>
+				{/if}
+			</button>
 		</div>
 		
 		<div class="grid grid-cols-2 gap-4">
-			{#each [4, 5, 6, 7, 8, 9] as m (m)}
+			{#each mesesVisiveis as m (m)}
+				{@const regra = regrasParcelamento.find(r => r.m === m) || regrasParcelamento[0]}
 				<button 
 					type="button"
 					class="relative p-6 rounded-3xl border-2 flex flex-col items-start gap-4 transition-all duration-500 overflow-hidden transform active:scale-95 min-h-[100px]
@@ -125,13 +227,13 @@
 					onclick={() => alterarMes(m)}
 				>
 					<div class="flex flex-col items-start leading-none">
-						<span class="text-[10px] uppercase tracking-widest font-black mb-1 opacity-60">Lote {regrasParcelamento[m].lote}</span>
-						<span class="text-xl font-serif italic font-bold">{regrasParcelamento[m].nome}</span>
+						<span class="text-[10px] uppercase tracking-widest font-black mb-1 opacity-60">Lote {regra.lote}</span>
+						<span class="text-xl font-serif italic font-bold">{regra.nome}</span>
 					</div>
 					
 					<div class="flex items-baseline gap-1 mt-auto">
 						<span class="text-[10px] font-bold">R$</span>
-						<span class="text-2xl font-serif font-black">{regrasParcelamento[m].valor}</span>
+						<span class="text-2xl font-serif font-black">{regra.valor}</span>
 					</div>
 
 					{#if mesSimulado === m}

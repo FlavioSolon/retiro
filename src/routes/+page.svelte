@@ -20,8 +20,8 @@
 	<!-- Canonical URL -->
 	<link rel="canonical" href="https://retirompc.com.br" />
 	
-	<!-- Favicon - Multiple formats for maximum compatibility -->
-	<link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
+	<!-- Favicon - SVG with black background for visibility -->
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="icon" type="image/png" href="/images/logo-mpc-white.png" sizes="192x192" />
 	<link rel="apple-touch-icon" href="/images/logo-mpc-white.png" sizes="180x180" />
 	<link rel="mask-icon" href="/images/logo-mpc-color.png" color="#1a1a2e" />
