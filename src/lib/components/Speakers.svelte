@@ -26,7 +26,7 @@
 			</h2>
 			<div class="flex items-center justify-center gap-4">
 				<div class="h-px w-12 bg-gold/30"></div>
-				<p class="text-cream/50 text-sm font-sans">25 anos de casamento • Fort Worth, Texas</p>
+				<p class="text-cream/50 text-sm font-sans">São casados há 25 anos • Moram em Fort Worth, Texas</p>
 				<div class="h-px w-12 bg-gold/30"></div>
 			</div>
 		</div>
@@ -58,11 +58,11 @@
 					</div>
 					
 					<!-- Photo Caption -->
-					<div class="absolute bottom-0 left-0 right-0 p-8">
+					<!-- <div class="absolute bottom-0 left-0 right-0 p-8">
 						<p class="text-cream/80 font-serif italic text-lg md:text-xl leading-relaxed">
 							"O casal é casado há 25 anos, tem três filhos e reside em <span class="text-gold">Fort Worth, Texas</span>."
 						</p>
-					</div>
+					</div> -->
 				</div>
 				
 				<!-- Decorative Elements -->
@@ -92,14 +92,6 @@
 								<p class="text-cream/60 text-sm leading-relaxed">
 									Pastor de Formação Espiritual na <span class="text-cream font-medium">Victory.Church</span>. Possui doutorado em Teologia e formação como Diretor Espiritual.
 								</p>
-								
-								<div class="mt-4 flex items-center gap-2 text-gold/60 text-xs">
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-										<path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-										<path d="M6 12v5c3 3 9 3 12 0v-5"/>
-									</svg>
-									<span>Doutor em Teologia</span>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -122,16 +114,6 @@
 								<p class="text-cream/60 text-sm leading-relaxed">
 									Pastora Executiva de Cultura e Desenvolvimento de Equipes na <span class="text-cream font-medium">Victory.Church</span>, com doutorado em Liderança Global.
 								</p>
-								
-								<div class="mt-4 flex items-center gap-2 text-terracotta/60 text-xs">
-									<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-										<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-										<circle cx="9" cy="7" r="4"/>
-										<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-										<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-									</svg>
-									<span>Doutora em Liderança Global</span>
-								</div>
 							</div>
 						</div>
 					</div>
