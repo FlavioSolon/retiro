@@ -8,7 +8,7 @@
 	<!-- Background Image with Overlay -->
 	<div class="absolute inset-0 z-0">
 		<img 
-			src="/images/hero.png" 
+			src="/images/fundo.avif" 
 			alt="Sacred atmosphere" 
 			class="w-full h-full object-cover opacity-50 scale-105"
 			loading="eager"

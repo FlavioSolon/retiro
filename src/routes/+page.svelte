@@ -6,6 +6,7 @@
 	import FAQAccordion from '$lib/components/FAQAccordion.svelte';
 	import StickyCTA from '$lib/components/StickyCTA.svelte';
 	import PhotoGallery from '$lib/components/PhotoGallery.svelte';
+	import Speakers from '$lib/components/Speakers.svelte';
 	import { animate } from '$lib/actions/animate';
 </script>
 
@@ -93,6 +94,9 @@
 	<div id="logistica">
 		<Logistics />
 	</div>
+
+	<!-- Speakers Section -->
+	<Speakers />
 
 	<!-- Photo Gallery -->
 	<PhotoGallery />
